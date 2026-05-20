@@ -147,7 +147,6 @@
 
         /* Print CSS */
         @media print {
-            /* Reset body to prevent 100vh from forcing a second page */
             html, body {
                 height: auto !important;
                 min-height: auto !important;
@@ -157,12 +156,10 @@
                 background: #fff !important;
             }
 
-            /* Completely hide app layout instead of visibility:hidden */
             .sidebar, .main-content, .toast-container, .modal-overlay {
                 display: none !important;
             }
 
-            /* Show ONLY the print area and make it dictate the document size */
             #print-area {
                 display: block !important;
                 position: relative !important;
@@ -172,24 +169,42 @@
                 margin: 0 !important;
             }
 
-            /* Ensure everything inside print area is visible */
             #print-area * {
                 visibility: visible !important;
             }
             
-            /* Formats configuration with box-sizing to prevent padding overflow */
             #print-area.thermal-58 { width: 58mm !important; padding: 5mm !important; font-size: 10px; margin: 0 auto !important; box-sizing: border-box; }
             #print-area.thermal-80 { width: 80mm !important; padding: 5mm !important; font-size: 12px; margin: 0 auto !important; box-sizing: border-box; }
-            
-            /* Reduced A4 padding slightly to avoid overlapping browser default print margins */
             #print-area.a4 { width: 100% !important; max-width: 210mm; padding: 10mm 15mm !important; font-size: 14px; margin: 0 auto !important; box-sizing: border-box; }
             
             .print-header { text-align: center; margin-bottom: 15px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
-            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-            .print-table th, .print-table td { border: 1px solid #000; padding: 4px; text-align: center; vertical-align: middle; }
-            .thermal-58 .print-table th, .thermal-58 .print-table td { border: none; border-bottom: 1px dashed #ccc; }
+            
+            .print-table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                margin-bottom: 15px !important; 
+                border: 2px solid #000 !important; 
+            }
+            
+            .print-table th, .print-table td { 
+                padding: 6px 8px !important; 
+                text-align: center !important; 
+                vertical-align: middle !important; 
+                border: 1px solid #000 !important; 
+            }
+            
+            .print-table th {
+                background-color: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color: red !important;
+                font-weight: bold !important;
+            }
 
-            /* Prevent elements from breaking across pages awkwardly */
+            .thermal-58 .print-table { border: none !important; }
+            .thermal-58 .print-table th, .thermal-58 .print-table td { border: none !important; border-bottom: 1px dashed #ccc !important; padding: 4px !important; }
+            .thermal-58 .print-table th { background-color: transparent !important; font-weight: bold; }
+
             table, .print-header, tr {
                 page-break-inside: avoid;
             }
@@ -235,21 +250,21 @@
             <section id="page-pos" class="page active">
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="fa-solid fa-user"></i> Customer Details</h3>
+                        <h3><i class="fa-solid fa-user"></i> </h3>
                         <span style="font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px;">
-                            Invoice #: 
+                            Invoice: 
                             <input type="text" id="pos-invoice-no" style="width: 180px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; font-weight: bold; color: var(--primary); outline: none;" value="">
                         </span>
                     </div>
                     <div class="grid-3">
                         <div class="form-group">
-                            <label>Customer Name / Phone search</label>
+                            <label>Search Customer Name/Phone Number</label>
                             <input type="text" id="pos-customer-name" placeholder="Type to search or add new..." autocomplete="off">
                             <div id="customer-autocomplete" class="autocomplete-items"></div>
                         </div>
                         <div class="form-group">
                             <label>Phone Number</label>
-                            <input type="text" id="pos-customer-phone" placeholder="01XXXXXXXXX">
+                            <input type="text" id="pos-customer-phone" placeholder="+27 XX XXX XXXX">
                         </div>
                         <div class="form-group">
                             <label>Address</label>
@@ -264,7 +279,7 @@
                             <select id="pos-payment-method">
                                 <option value="Cash">Cash</option>
                                 <option value="Card">Card</option>
-                                <option value="Mobile Banking">Mobile Banking (Bkash/Nagad)</option>
+                                <option value="Mobile Banking">Mobile Banking</option>
                                 <option value="Due">Keep Due</option>
                             </select>
                         </div>
@@ -280,14 +295,14 @@
                         <table id="pos-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 50px;">SL</th>
-                                    <th>Product Name / Code</th>
+                                    <th style="width: 50px;">NO</th>
+                                    <th>Product Name</th>
                                     <th style="width: 100px;">Stock</th>
                                     <th style="width: 100px;">Qty</th>
                                     <th style="width: 150px;">Unit Price</th>
                                     <th style="width: 120px;">Disc (%)</th>
                                     <th style="width: 150px;">Total</th>
-                                    <th style="width: 50px;">X</th>
+                                    <th style="width: 50px;">❎</th>
                                 </tr>
                             </thead>
                             <tbody id="pos-tbody">
@@ -299,7 +314,7 @@
                     <div class="grid-2">
                         <div>
                             <div class="form-group" style="margin-top: 20px;">
-                                <label>Notes / Terms</label>
+                                <label>RULES</label>
                                 <textarea id="pos-notes" rows="3" placeholder="Additional notes..."></textarea>
                             </div>
                         </div>
@@ -325,17 +340,17 @@
                                 <input type="number" id="pos-cash-paid" class="table-input" style="width: 100px; text-align: right; background: rgba(0,0,0,0.05);" value="0" oninput="calculateTotals()">
                             </div>
                             <div class="total-row" style="color: var(--danger);">
-                                <span>Due / Change Return:</span>
+                                <span>Due:</span>
                                 <span><span class="currency-symbol">R</span> <span id="calc-due">0.00</span></span>
                             </div>
                             <div class="amount-in-words" id="amount-words">Zero Only</div>
                         </div>
                     </div>
                     
-                    <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px;">
-                        <button class="btn btn-outline" onclick="resetPos()"><i class="fa-solid fa-rotate-right"></i> Reset</button>
-                        <button class="btn btn-success" onclick="saveInvoice('print')"><i class="fa-solid fa-print"></i> Save & Print</button>
-                        <button class="btn btn-primary" onclick="saveInvoice('save')"><i class="fa-solid fa-save"></i> Save Invoice</button>
+                    <div style="display: flex; justify-content: flex-end; gap: 5px; margin-top: 10px;">
+                        <button class="btn btn-outline" onclick="resetPos()"><i class=""></i> Reset</button>
+                        <button class="btn btn-success" onclick="saveInvoice('print')"><i class=""></i> Save & Print</button>
+                        <button class="btn btn-primary" onclick="saveInvoice('save')"><i class=""></i> Save </button>
                     </div>
                 </div>
             </section>
@@ -534,14 +549,14 @@
          * 1. FIREBASE CONFIGURATION (USER MUST REPLACE THIS)
          *******************************************************/
         const firebaseConfig = {
-            apiKey: "AIzaSyAUjV_tUlWb5S7A8HSoTcU3vjvbuPzjtvI",
-            authDomain: "app-1-e0ede.firebaseapp.com",
-            databaseURL: "https://app-1-e0ede-default-rtdb.firebaseio.com",
-            projectId: "app-1-e0ede",
-            storageBucket: "app-1-e0ede.firebasestorage.app",
-            messagingSenderId: "679519684721",
-            appId: "1:679519684721:web:56b78c83b7fc66c30c73d0"
-        };
+  apiKey: "AIzaSyDu_u-QLEA8Xb-IW4fP31Yvx6ZZulp2PFg",
+  authDomain: "facebook-34909.firebaseapp.com",
+  databaseURL: "https://facebook-34909-default-rtdb.firebaseio.com",
+  projectId: "facebook-34909",
+  storageBucket: "facebook-34909.firebasestorage.app",
+  messagingSenderId: "575400790259",
+  appId: "1:575400790259:web:71c589dce69d87542a8f86"
+};
 
         // Initialize Firebase
         let db;
@@ -622,12 +637,13 @@
 
         function generateInvoiceNo() {
             if(editMemoId) {
-                document.getElementById('pos-invoice-no').value = editMemoId;
+                const memo = state.memos[editMemoId];
+                if(memo) {
+                    document.getElementById('pos-invoice-no').value = memo.invoiceNo;
+                }
                 return;
             }
             const count = Object.keys(state.memos).length + 1;
-            const dateStr = new Date().toISOString().slice(2,10).replace(/-/g, '');
-            // Generates an editable default invoice number 
             document.getElementById('pos-invoice-no').value = `INV-${count.toString().padStart(4, '0')}`;
         }
 
@@ -721,7 +737,6 @@
             applySettings();
             showToast('Settings Saved', 'success');
             
-            // Update the POS notes field automatically if currently empty or matches old default
             if(!document.getElementById('pos-notes').value) {
                 document.getElementById('pos-notes').value = state.settings.defaultNotes;
             }
@@ -777,7 +792,6 @@
             renderProducts();
             showToast('Product Saved', 'success');
             
-            // Clear form
             document.querySelectorAll('#product-modal input').forEach(inpt => inpt.value = '');
         }
 
@@ -868,7 +882,7 @@
             tbody.innerHTML = '';
             
             if(posRows.length === 0) {
-                addPosRow(); // keep at least 1 empty row
+                addPosRow();
                 return;
             }
 
@@ -892,7 +906,6 @@
             calculateTotals();
         }
 
-        // Auto-complete for Products in POS Table
         function searchPosProduct(inputElem, rowId) {
             const val = inputElem.value.toLowerCase();
             const autocompleteDiv = inputElem.nextElementSibling;
@@ -901,7 +914,7 @@
             
             let count = 0;
             for(let key in state.products) {
-                if(count > 5) break; // Limit suggestions
+                if(count > 5) break;
                 const p = state.products[key];
                 if(p.name.toLowerCase().includes(val) || p.code.toLowerCase().includes(val)) {
                     const div = document.createElement('div');
@@ -922,7 +935,6 @@
             autocompleteDiv.style.display = count > 0 ? 'block' : 'none';
         }
 
-        // Auto-complete for Customer
         document.getElementById('pos-customer-name').addEventListener('keyup', function() {
             const val = this.value.toLowerCase();
             const div = document.getElementById('customer-autocomplete');
@@ -945,7 +957,6 @@
             }
         });
 
-        // Calculations
         function calculateTotals() {
             let subtotal = 0;
             let totalDiscount = 0;
@@ -962,7 +973,6 @@
                 subtotal += rowGross;
                 totalDiscount += rowDisc;
 
-                // Update UI Row Total
                 const trs = document.getElementById('pos-tbody').children;
                 if(trs[index]) {
                     trs[index].querySelector('.row-total span').innerText = rowNet.toFixed(2);
@@ -973,7 +983,7 @@
             const tax = netSubtotal * (state.settings.tax / 100);
             const grandTotal = netSubtotal + tax;
             const cashPaid = parseFloat(document.getElementById('pos-cash-paid').value) || 0;
-            const due = grandTotal - cashPaid; // If positive = Due, negative = Change
+            const due = grandTotal - cashPaid;
 
             document.getElementById('calc-subtotal').innerText = subtotal.toFixed(2);
             document.getElementById('calc-discount').innerText = totalDiscount.toFixed(2);
@@ -984,9 +994,7 @@
             document.getElementById('amount-words').innerText = numberToWords(Math.round(grandTotal)) + " Only";
         }
 
-        // Save & Print Invoice
         function saveInvoice(action = 'save') {
-            // Validation
             const custName = document.getElementById('pos-customer-name').value;
             if(!custName) return showToast('Customer Name is required!', 'danger');
             
@@ -997,10 +1005,9 @@
             const phone = document.getElementById('pos-customer-phone').value;
             const address = document.getElementById('pos-customer-address').value;
             
-            // Handle Customer DB Save
             let custId = Object.keys(state.customers).find(k => state.customers[k].phone === phone);
             let customerDue = parseFloat(document.getElementById('calc-due').innerText);
-            if(customerDue < 0) customerDue = 0; // Don't save negative due (change)
+            if(customerDue < 0) customerDue = 0;
 
             if(!custId) {
                 custId = db ? db.ref('customers').push().key : 'CUST' + Date.now();
@@ -1010,7 +1017,6 @@
             if(db) db.ref('customers/' + custId).set(custData);
             state.customers[custId] = custData;
 
-            // Update Product Stock
             validRows.forEach(row => {
                 if(row.prodId && state.products[row.prodId]) {
                     const p = state.products[row.prodId];
@@ -1019,7 +1025,6 @@
                 }
             });
 
-            // Construct Memo Object
             const memoData = {
                 invoiceNo: invoiceNo,
                 date: document.getElementById('pos-date').value,
@@ -1059,9 +1064,9 @@
             document.getElementById('pos-customer-phone').value = '';
             document.getElementById('pos-customer-address').value = '';
             document.getElementById('pos-cash-paid').value = '0';
-            document.getElementById('pos-notes').value = state.settings.defaultNotes || ''; // Apply default notes here
+            document.getElementById('pos-notes').value = state.settings.defaultNotes || '';
             posRows = [];
-            addPosRow(); // initialize empty row
+            addPosRow();
             generateInvoiceNo();
         }
 
@@ -1074,7 +1079,6 @@
             const search = document.getElementById('search-history').value.toLowerCase();
             const dateFilter = document.getElementById('filter-date').value;
 
-            // Sort newest first
             const sortedMemos = Object.entries(state.memos).sort((a,b) => b[1].timestamp - a[1].timestamp);
 
             sortedMemos.forEach(([id, memo]) => {
@@ -1116,7 +1120,7 @@
             document.getElementById('pos-notes').value = memo.notes || '';
             
             posRows = memo.items;
-            navigate('pos'); // switches tab
+            navigate('pos');
             renderPosTable();
         }
 
@@ -1141,7 +1145,7 @@
         function printInvoice(memo) {
             const printArea = document.getElementById('print-area');
             const format = state.settings.printFormat;
-            printArea.className = format; // a4, thermal-80, thermal-58
+            printArea.className = format;
 
             let itemsHTML = '';
             memo.items.forEach((item, i) => {
@@ -1157,21 +1161,18 @@
                 `;
             });
 
-            // UPDATED HERE: Totals are colored Red, Rules are rendered Bold, and Background Logo added
             printArea.innerHTML = `
-                <!-- BACKGROUND WATERMARK LOGO -->
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: flex; justify-content: center; align-items: center;">
                     <img src="https://i.ibb.co/ks9SxHP5/Picsart-26-04-13-22-47-44-412.png" style="width: 300%; max-width: 900px; opacity: 0.07;">
                 </div>
                 
-                <!-- PRINT CONTENT -->
                 <div style="position: relative; z-index: 1;">
                     <div class="print-header">
                         <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
                             <img src="https://i.ibb.co/ks9SxHP5/Picsart-26-04-13-22-47-44-412.png" alt="Shop Logo" style="max-width: 110px; height: auto;">
                             <div style="text-align: left;">
                                 <h1 style="margin: 0 0 5px 0; color: red;">${state.settings.shopName}</h1>
-                                <h2 style="margin: 0; font-size: 15px; color: blue;">${state.settings.shopAddress}<br>Phone: ${state.settings.shopPhone}</h2>
+                                <h2 style="margin: 0; font-size: 15px; color: #0020C2;">${state.settings.shopAddress}<br>Phone: ${state.settings.shopPhone}</h2>
                             </div>
                         </div>
                         <h1 style="margin-top:10px; border-top:1px solid #000; padding-top:10px;">CASH MEMO / INVOICE</h1>
@@ -1192,21 +1193,23 @@
                     <table class="print-table">
                         <thead>
                             <tr>
-                                <th style="color: red;">NO</th>
-                                <th style="color: red;">DESCRIPTION</th>
-                                <th style="color: red;">QTY</th>
-                                <th style="color: red;">UNIT PRICE</th>
-                                <th style="color: red;">AMOUNT</th>
+                                <th>NO</th>
+                                <th>DESCRIPTION</th>
+                                <th>QTY</th>
+                                <th>UNIT PRICE</th>
+                                <th>AMOUNT</th>
                             </tr>
                         </thead>
                         <tbody>${itemsHTML}</tbody>
                     </table>
-                    <div style="text-align: right; font-size:12px; margin-top:10px; line-height: 1.5;">
-                        <p style="color: red;"><strong> SUBTOTAL: ${state.settings.currency}${memo.subtotal}</strong></p>
-                        <p style="color: red;"><strong> CASH PAID: ${state.settings.currency}${memo.cashPaid}</strong></p>
-                        <p style="color: red;"><strong> TOTAL: ${state.settings.currency}${memo.grandTotal}</strong></p>
+<div style="text-align: right; font-size:12px; margin-top:10px; line-height: 1.5;">
+                        <p style="color: blue;"><strong> SUBTOTAL: ${state.settings.currency}${memo.subtotal}</strong></p>
+                        <p style="color: blue;"><strong> DISCOUNT: ${state.settings.currency}${memo.discount}</strong></p>
+                        <p style="color: blue;"><strong> TOTAL: ${state.settings.currency}${memo.grandTotal}</strong></p>
+                        <p style="color: blue;"><strong> CASH PAID: ${state.settings.currency}${memo.cashPaid}</strong></p>
+                        <p style="color: red;"><strong> DUE: ${state.settings.currency}${memo.due}</strong></p>
                     </div>
-                    <h3 style="margin-top: 10px; font-size: 11px; font-style: italic;">In Words: ${numberToWords(Math.round(memo.grandTotal))} Rand Only.</h3>
+                    <h style="margin-top: 10px; font-size: 11px; font-style: italic;">In Words: ${numberToWords(Math.round(memo.grandTotal))} Rand Only.</h>
                     
                     <div style="margin-top: 20px; font-size:11px; white-space: pre-wrap; font-weight: bold;"><strong>Rules:</strong><br>${memo.notes || 'N/A'}</div>
                     
@@ -1228,10 +1231,9 @@
             showToast('Generating PDF...', 'primary');
             const memo = state.memos[id];
             
-            // Temporary render to DOM for html2canvas
-            printInvoice(memo); // Render it to print-area
+            printInvoice(memo);
             const printArea = document.getElementById('print-area');
-            printArea.style.display = 'block'; // Make visible temporarily
+            printArea.style.display = 'block';
             
             try {
                 const canvas = await html2canvas(printArea, { scale: 2 });
@@ -1249,7 +1251,7 @@
                 console.error(e);
                 showToast('Failed to generate PDF', 'danger');
             } finally {
-                printArea.style.display = 'none'; // Hide again
+                printArea.style.display = 'none';
             }
         }
 
@@ -1319,24 +1321,20 @@
             showToast('Backup Downloaded', 'success');
         }
 
-        // Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl+S to save
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 if(document.getElementById('page-pos').classList.contains('active')) saveInvoice('save');
             }
-            // F2 to Add Row
             if (e.key === 'F2') {
                 e.preventDefault();
                 if(document.getElementById('page-pos').classList.contains('active')) addPosRow();
             }
         });
 
-        // Init App properly
         window.onload = () => {
             renderPosTable();
-            document.getElementById('pos-notes').value = state.settings.defaultNotes || ''; // Apply default notes on first load
+            document.getElementById('pos-notes').value = state.settings.defaultNotes || '';
         };
 
     </script>
